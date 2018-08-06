@@ -1,1 +1,10 @@
-target
+#Ignore the vagrant dir
+.vagrant
+#ignore all logfiles
+*.log
+#ignore .aws folder
+.aws
+#ignore all certs
+*.pub
+id_rsa
+.boto
