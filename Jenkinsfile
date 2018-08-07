@@ -2,12 +2,12 @@ pipeline {
     agent any
     
     parameters { 
-         string(name: 'tomcat_dev', defaultValue: '35.166.210.154', description: 'Staging Server')
-         string(name: 'tomcat_prod', defaultValue: '34.209.233.6', description: 'Production Server')
+         string(name: 'tomcat_dev', defaultValue: '192.168.0.3', description: 'Staging Server')
+         string(name: 'tomcat_prod', defaultValue: '54.201.71.85', description: 'Production Server')
     } 
 
     triggers {
-         pollSCM('* * * * *') // Polling Source Control
+         pollSCM('0,30 * * * *') // Polling Source Control
      }
 
 stages{
@@ -23,20 +23,39 @@ stages{
             }
         }
 
-        stage ('Deployments'){
+        stage ('Deployment and SCA'){
             parallel{
                 stage ('Deploy to Staging'){
                     steps {
-                        sh "scp -i /home/jenkins/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_dev}:/var/lib/tomcat7/webapps"
+                        sh "scp **/target/*.war ${params.tomcat_dev}:/opt/tomcat/webapps"
                     }
                 }
-
-                stage ("Deploy to Production"){
-                    steps {
-                        sh "scp -i /home/jenkins/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
+                stage('Static Code Analysis') {
+                    steps{
+                        buils job: 'static analysis'
                     }
                 }
             }
         }
+
+        stage ('Deploy to Production'){
+            options {
+                timeout(time:5, unit:'DAYS'){
+                    input message:'Approve PRODUCTION Deployment?'
+                }
+            }
+            steps{
+                sh "scp -i /vagrant/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
+                }
+            }
+            post {
+                success {
+                    echo 'Code deployed to Production.'
+                }
+
+                failure {
+                    echo ' Deployment failed.'
+                }
+            }
     }
 }
