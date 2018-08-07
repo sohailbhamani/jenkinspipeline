@@ -30,7 +30,7 @@ stages{
             parallel{
                 stage ('Deploy to Staging'){
                     steps {
-                        sh "scp -i /home/vagrant/.ssh/id_rsa **/target/*.war vagrant@${params.tomcat_dev}:/opt/tomcat/webapps"
+                        sh "scp -i /home/vagrant/jenkins-demo.pem **/target/*.war vagrant@${params.tomcat_dev}:/opt/tomcat/webapps"
                     }
                 }
                 stage ('Deploy to Production'){
