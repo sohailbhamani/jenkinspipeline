@@ -31,7 +31,7 @@ stages{
             parallel{
                 stage ('Deploy to Staging'){
                     steps {
-                        sh "scp **/target/*.war vagrant@${params.tomcat_dev}:/opt/tomcat/webapps"
+                        sh "scp -i /home/vagrant/.ssh/id_rsa **/target/*.war vagrant@${params.tomcat_dev}:/opt/tomcat/webapps"
                     }
                 }
                 stage('Static Code Analysis') {
@@ -44,7 +44,7 @@ stages{
 
         stage ('Deploy to Production'){
             steps{
-                sh "scp -i /vagrant/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
+                sh "scp -i /home/vagrant/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
                 }    
             post {
                 success {
