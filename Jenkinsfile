@@ -31,7 +31,7 @@ stages{
             parallel{
                 stage ('Deploy to Staging'){
                     steps {
-                        sh "scp **/target/*.war ${params.tomcat_dev}:/opt/tomcat/webapps"
+                        sh "scp **/target/*.war vagrant@${params.tomcat_dev}:/opt/tomcat/webapps"
                     }
                 }
                 stage('Static Code Analysis') {
