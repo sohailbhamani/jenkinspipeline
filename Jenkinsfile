@@ -26,35 +26,20 @@ stages{
                 }
             }
         }
-
-        stage ('Deployment and SCA'){
+        stage ('Deployment to Staging'){
             parallel{
                 stage ('Deploy to Staging'){
                     steps {
                         sh "scp -i /home/vagrant/.ssh/id_rsa **/target/*.war vagrant@${params.tomcat_dev}:/opt/tomcat/webapps"
                     }
                 }
-                stage('Static Code Analysis') {
-                    steps{
-                        buils job: 'static analysis'
+                stage ('Deploy to Production'){
+                    steps {
+                        sh "scp -i /home/vagrant/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
                     }
                 }
             }
         }
 
-        stage ('Deploy to Production'){
-            steps{
-                sh "scp -i /home/vagrant/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
-                }    
-            post {
-                success {
-                    echo 'Code deployed to Production.'
-                }
-
-                failure {
-                    echo ' Deployment failed.'
-                }
-            }
-        }
     }
 }
