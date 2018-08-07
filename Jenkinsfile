@@ -39,15 +39,9 @@ stages{
         }
 
         stage ('Deploy to Production'){
-            options {
-                timeout(time:5, unit:'DAYS'){
-                    input message:'Approve PRODUCTION Deployment?'
-                }
-            }
             steps{
                 sh "scp -i /vagrant/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
-                }
-            }
+                }    
             post {
                 success {
                     echo 'Code deployed to Production.'
@@ -57,5 +51,6 @@ stages{
                     echo ' Deployment failed.'
                 }
             }
+        }
     }
 }
