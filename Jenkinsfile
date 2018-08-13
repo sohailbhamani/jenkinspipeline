@@ -9,11 +9,11 @@ pipeline {
          string(name: 'tomcat_dev', defaultValue: '192.168.0.3', description: 'Staging Server')
          string(name: 'tomcat_prod', defaultValue: '54.201.71.85', description: 'Production Server')
     } 
-
+/*
     triggers {
          pollSCM('0,30 * * * *') // Polling Source Control
      }
-
+*/
 stages{
         stage('Build'){
             steps {
